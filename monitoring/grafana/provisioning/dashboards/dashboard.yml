@@ -1,0 +1,12 @@
+apiVersion: 1
+
+providers:
+  - name: 'WINK Dashboards'
+    orgId: 1
+    folder: 'WINK Analytics'
+    type: file
+    disableDeletion: false
+    updateIntervalSeconds: 10
+    allowUiUpdates: true
+    options:
+      path: /etc/grafana/provisioning/dashboards

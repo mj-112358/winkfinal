@@ -1,0 +1,226 @@
+
+services:
+  # Redis for real-time tracking and queue management
+  redis:
+    image: redis:7-alpine
+    container_name: wink-redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    networks: [internal, web]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # PostgreSQL for production database (optional upgrade from SQLite)
+  postgres:
+    image: postgres:15-alpine
+    container_name: wink-postgres
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DB=wink_analytics
+      - POSTGRES_USER=wink_user
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-wink_secure_password}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks: [internal]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U wink_user -d wink_analytics"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # WINK Backend API
+  backend:
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: wink-backend
+    restart: unless-stopped
+    env_file: ./backend/.env
+    environment:
+      - VIRTUAL_HOST=api.winkai.in
+      - VIRTUAL_PORT=8000
+      - LETSENCRYPT_HOST=api.winkai.in
+      - LETSENCRYPT_EMAIL=mrityunjay.coder@gmail.com
+      - REDIS_URL=redis://redis:6379
+      - DATABASE_URL=postgresql://wink_user:${POSTGRES_PASSWORD:-wink_secure_password}@postgres:5432/wink_analytics
+      - STORE_ID=${STORE_ID:-default_store}
+      - STORE_NAME=${STORE_NAME:-Default Store}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - MODEL_DEVICE=${MODEL_DEVICE:-cpu}
+      - FRAME_RATE=${FRAME_RATE:-12}
+      - DETECTION_INTERVAL=${DETECTION_INTERVAL:-3}
+    volumes:
+      - ./backend/assets:/app/assets
+      - ./backend/wink_store.db:/app/wink_store.db
+      - ./backend/models:/app/models
+    depends_on:
+      - redis
+      - postgres
+    networks: [internal, web]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/healthz"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Camera processing workers (can be scaled)
+  camera-processor:
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile.processor
+    restart: unless-stopped
+    env_file: ./backend/.env
+    environment:
+      - REDIS_URL=redis://redis:6379
+      - DATABASE_URL=postgresql://wink_user:${POSTGRES_PASSWORD:-wink_secure_password}@postgres:5432/wink_analytics
+      - STORE_ID=${STORE_ID:-default_store}
+      - MODEL_DEVICE=${MODEL_DEVICE:-cpu}
+      - FRAME_RATE=${FRAME_RATE:-12}
+      - DETECTION_INTERVAL=${DETECTION_INTERVAL:-3}
+    volumes:
+      - ./backend/models:/app/models
+    depends_on:
+      - redis
+      - postgres
+      - backend
+    networks: [internal]
+    deploy:
+      replicas: 2
+
+  # Frontend application  
+  frontend:
+    build: 
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: wink-frontend
+    restart: unless-stopped
+    environment:
+      - VIRTUAL_HOST=winkai.in,www.winkai.in
+      - VIRTUAL_PORT=80
+      - LETSENCRYPT_HOST=winkai.in,www.winkai.in
+      - LETSENCRYPT_EMAIL=mrityunjay.coder@gmail.com
+      - REACT_APP_API_URL=https://api.winkai.in
+    depends_on:
+      - backend
+    networks: [web]
+
+  # Prometheus for monitoring
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: wink-prometheus
+    restart: unless-stopped
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=200h'
+      - '--web.enable-lifecycle'
+    environment:
+      - VIRTUAL_HOST=metrics.winkai.in
+      - VIRTUAL_PORT=9090
+      - LETSENCRYPT_HOST=metrics.winkai.in
+      - LETSENCRYPT_EMAIL=mrityunjay.coder@gmail.com
+    networks: [internal, web]
+
+  # Grafana for visualization
+  grafana:
+    image: grafana/grafana:latest
+    container_name: wink-grafana
+    restart: unless-stopped
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD:-admin123}
+      - GF_INSTALL_PLUGINS=grafana-clock-panel,grafana-simple-json-datasource
+      - VIRTUAL_HOST=dashboard.winkai.in
+      - VIRTUAL_PORT=3000
+      - LETSENCRYPT_HOST=dashboard.winkai.in
+      - LETSENCRYPT_EMAIL=mrityunjay.coder@gmail.com
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning
+    depends_on:
+      - prometheus
+    networks: [internal, web]
+
+  # Nginx reverse proxy
+  nginx-proxy:
+    image: jwilder/nginx-proxy:latest
+    container_name: nginx-proxy
+    restart: unless-stopped
+    ports: 
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - ./nginx/certs:/etc/nginx/certs
+      - ./nginx/vhost.d:/etc/nginx/vhost.d
+      - ./nginx/html:/usr/share/nginx/html
+    networks: [web]
+    depends_on:
+      - backend
+      - frontend
+
+  # SSL certificate automation
+  nginx-proxy-acme:
+    image: nginxproxy/acme-companion:latest
+    container_name: nginx-proxy-acme
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./nginx/certs:/etc/nginx/certs
+      - ./nginx/vhost.d:/etc/nginx/vhost.d
+      - ./nginx/html:/usr/share/nginx/html
+      - ./nginx/acme.sh:/etc/acme.sh
+    environment:
+      - DEFAULT_EMAIL=mrityunjay.coder@gmail.com
+      - NGINX_PROXY_CONTAINER=nginx-proxy
+    depends_on:
+      - nginx-proxy
+    networks: [web]
+
+  # Log aggregation (optional)
+  loki:
+    image: grafana/loki:latest
+    container_name: wink-loki
+    restart: unless-stopped
+    volumes:
+      - ./monitoring/loki-config.yml:/etc/loki/local-config.yaml
+      - loki_data:/loki
+    command: -config.file=/etc/loki/local-config.yaml
+    networks: [internal]
+
+  # Log collection
+  promtail:
+    image: grafana/promtail:latest
+    container_name: wink-promtail
+    restart: unless-stopped
+    volumes:
+      - /var/log:/var/log:ro
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - ./monitoring/promtail-config.yml:/etc/promtail/config.yml
+    command: -config.file=/etc/promtail/config.yml
+    depends_on:
+      - loki
+    networks: [internal]
+
+volumes:
+  redis_data:
+  postgres_data:
+  prometheus_data:
+  grafana_data:
+  loki_data:
+
+networks:
+  web:
+    external: false
+  internal:
+    external: false

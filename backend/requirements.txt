@@ -1,0 +1,12 @@
+fastapi>=0.111.0
+uvicorn[standard]>=0.29.0
+pydantic>=2.8.2
+python-dotenv>=1.0.1
+opencv-python>=4.9.0.80
+ultralytics>=8.2.0
+numpy>=1.26.4
+Pillow>=10.3.0
+python-multipart>=0.0.9
+requests>=2.32.3
+openai>=1.37.0
+redis>=5.0.0

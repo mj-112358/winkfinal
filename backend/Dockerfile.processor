@@ -1,0 +1,33 @@
+# Camera processor Dockerfile
+FROM python:3.11-slim
+
+# Install system dependencies for OpenCV and ML libraries
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ffmpeg \
+    libsm6 \
+    libxext6 \
+    libxrender-dev \
+    libglib2.0-0 \
+    libgtk-3-0 \
+    libavcodec-dev \
+    libavformat-dev \
+    libswscale-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# Copy requirements and install Python dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy source code
+COPY . .
+
+# Set Python path
+ENV PYTHONPATH=/app
+
+# Expose any necessary ports (if processor has health check endpoint)
+EXPOSE 8001
+
+# Run the camera processor worker
+CMD ["python", "-m", "src.processor_worker"]
