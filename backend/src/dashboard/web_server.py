@@ -9,7 +9,8 @@ from fastapi.responses import FileResponse
 from pydantic import BaseModel
 from dotenv import load_dotenv
 
-from ..database.db_manager import db, migrate_all, set_local_store
+from ..database.database import get_database
+from ..database.migrations import run_migrations
 from ..core.store_scope import current_store_id
 from ..analytics.analytics_engine import recompute_daily_store_metrics
 
@@ -20,8 +21,10 @@ app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], all
 
 @app.on_event("startup")
 async def boot():
-    migrate_all()
-    set_local_store(os.getenv("STORE_ID","unknown_store"), os.getenv("STORE_NAME","Unknown Store"))
+    # Run database migrations
+    run_migrations()
+
+    # Create assets directory
     Path(os.getenv("ASSETS_DIR","assets")).mkdir(parents=True, exist_ok=True)
 
 # ---- Camera management ----
