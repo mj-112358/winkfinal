@@ -76,7 +76,7 @@ class AuthMiddleware:
             return user
         return role_checker
     
-    def get_store_context(self, user: User = Depends(get_current_user)) -> str:
+    def get_store_context(self, user: User) -> str:
         """Get the store context for the current user."""
         return str(user.store_id)
 
@@ -84,19 +84,19 @@ class AuthMiddleware:
 auth_middleware = AuthMiddleware()
 
 # Dependency functions for FastAPI
-def get_current_user(
+async def get_current_user(
     credentials: HTTPAuthorizationCredentials = Depends(security),
     db: Session = Depends(get_db_session)
 ) -> User:
     """FastAPI dependency to get the current authenticated user."""
-    return auth_middleware.get_current_user(credentials, db)
+    return await auth_middleware.get_current_user(credentials, db)
 
-def get_optional_user(
+async def get_optional_user(
     request: Request,
     db: Session = Depends(get_db_session)
 ) -> Optional[User]:
     """FastAPI dependency to get the current user if authenticated."""
-    return auth_middleware.get_optional_user(request, db)
+    return await auth_middleware.get_optional_user(request, db)
 
 def require_manager():
     """FastAPI dependency to require manager role or higher."""
@@ -106,7 +106,7 @@ def require_store_owner():
     """FastAPI dependency to require store owner role."""
     return auth_middleware.require_role("store_owner")
 
-def get_store_context(user: User = Depends(get_current_user)) -> str:
+async def get_store_context(user: User = Depends(get_current_user)) -> str:
     """FastAPI dependency to get the store context."""
     return str(user.store_id)
 
