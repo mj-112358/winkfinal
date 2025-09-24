@@ -34,7 +34,7 @@ services:
       timeout: 10s
       retries: 3
 
-  # Wink AI Backend API
+  # Wink Backend API
   wink-api:
     build:
       context: ./backend

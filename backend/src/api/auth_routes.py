@@ -1,5 +1,5 @@
 """
-Authentication routes for the Wink AI platform.
+Authentication routes for the Wink platform.
 Handles login, registration, invites, and password management.
 """
 

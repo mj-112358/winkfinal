@@ -1,10 +1,10 @@
 #!/bin/bash
-# Simple VPS deployment script for Wink AI Platform
+# Simple VPS deployment script for Wink Platform
 # Run this on your Ubuntu 20.04+ server
 
 set -e
 
-echo "🚀 Starting Wink AI Platform deployment..."
+echo "🚀 Starting Wink Platform deployment..."
 
 # Update system
 sudo apt update && sudo apt upgrade -y
@@ -64,7 +64,7 @@ with db.get_session() as session:
 # Setup systemd service for backend
 sudo tee /etc/systemd/system/wink-api.service > /dev/null <<EOF
 [Unit]
-Description=Wink AI Analytics API
+Description=Wink Analytics API
 After=network.target postgresql.service redis.service
 
 [Service]
@@ -149,7 +149,7 @@ sudo ufw --force enable
 
 echo "✅ Deployment complete!"
 echo ""
-echo "🌐 Your Wink AI Platform is now available at:"
+echo "🌐 Your Wink Platform is now available at:"
 echo "   Frontend: https://winkai.in"
 echo "   API: https://api.winkai.in"
 echo "   Health: https://api.winkai.in/health"

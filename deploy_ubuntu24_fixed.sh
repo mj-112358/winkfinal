@@ -1,8 +1,8 @@
 #!/bin/bash
-# Ubuntu 24.04 VPS deployment script for Wink AI Platform - FIXED VERSION
+# Ubuntu 24.04 VPS deployment script for Wink Platform - FIXED VERSION
 set -e
 
-echo "🚀 Starting Wink AI Platform deployment for Ubuntu 24.04..."
+echo "🚀 Starting Wink Platform deployment for Ubuntu 24.04..."
 
 # Update system
 sudo apt update && sudo apt upgrade -y
@@ -96,7 +96,7 @@ sudo -u wink ./venv/bin/python -c "from src.database.migrations import run_migra
 # Setup systemd service for backend
 sudo tee /etc/systemd/system/wink-api.service > /dev/null <<EOF
 [Unit]
-Description=Wink AI Analytics API
+Description=Wink Analytics API
 After=network.target postgresql.service redis.service
 
 [Service]
@@ -181,7 +181,7 @@ sudo ufw --force enable
 
 echo "✅ Deployment complete!"
 echo ""
-echo "🌐 Your Wink AI Platform is now available at:"
+echo "🌐 Your Wink Platform is now available at:"
 echo "   Frontend: http://winkai.in"
 echo "   API: http://api.winkai.in"
 echo "   Health: http://api.winkai.in/health"

@@ -35,7 +35,7 @@ const Logo: React.FC<LogoProps> = ({
     >
       <motion.img
         src="/logo.png"
-        alt="Wink AI"
+        alt="Wink"
         className={`${sizeClasses[size]} w-auto object-contain`}
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 1, scale: 1 }}
@@ -63,7 +63,7 @@ const Logo: React.FC<LogoProps> = ({
           transition={{ duration: 0.3, delay: 0.1 }}
         >
           <span className={`font-bold text-text ${textSizeClasses[size]}`}>
-            Wink AI
+            Wink
           </span>
         </motion.div>
       )}

@@ -1,5 +1,5 @@
 """
-SQLAlchemy models for the Wink AI retail analytics platform.
+SQLAlchemy models for the Wink retail analytics platform.
 All models include store_id for multi-tenant isolation.
 """
 

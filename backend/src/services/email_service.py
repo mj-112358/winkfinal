@@ -65,7 +65,7 @@ email_service = EmailService()
 
 def send_invite_email(to_email: str, invite_token: str, store_name: str, invited_by: str) -> bool:
     """Send invitation email to new user."""
-    subject = f"You're invited to join {store_name} on Wink AI"
+    subject = f"You're invited to join {store_name} on Wink"
     
     # Create invite URL (you'll need to adjust this based on your frontend URL)
     invite_url = f"https://winkai.in/accept-invite?token={invite_token}"
@@ -74,10 +74,10 @@ def send_invite_email(to_email: str, invite_token: str, store_name: str, invited
     <html>
       <body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
         <div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px;">
-          <h2 style="color: #333;">Welcome to Wink AI!</h2>
+          <h2 style="color: #333;">Welcome to Wink!</h2>
           <p>Hi there!</p>
-          <p><strong>{invited_by}</strong> has invited you to join <strong>{store_name}</strong> on Wink AI.</p>
-          <p>Wink AI is a powerful retail analytics platform that helps businesses understand customer behavior through AI-powered video analysis.</p>
+          <p><strong>{invited_by}</strong> has invited you to join <strong>{store_name}</strong> on Wink.</p>
+          <p>Wink is a powerful retail analytics platform that helps businesses understand customer behavior through AI-powered video analysis.</p>
           
           <div style="text-align: center; margin: 30px 0;">
             <a href="{invite_url}" 
@@ -97,7 +97,7 @@ def send_invite_email(to_email: str, invite_token: str, store_name: str, invited
           
           <hr style="border: none; border-top: 1px solid #ddd; margin: 30px 0;">
           <p style="font-size: 12px; color: #999; text-align: center;">
-            This email was sent by Wink AI. If you have questions, please contact support.
+            This email was sent by Wink. If you have questions, please contact support.
           </p>
         </div>
       </body>
@@ -105,9 +105,9 @@ def send_invite_email(to_email: str, invite_token: str, store_name: str, invited
     """
     
     text_body = f"""
-    Welcome to Wink AI!
+    Welcome to Wink!
     
-    {invited_by} has invited you to join {store_name} on Wink AI.
+    {invited_by} has invited you to join {store_name} on Wink.
     
     To accept this invitation, visit: {invite_url}
     
@@ -120,7 +120,7 @@ def send_invite_email(to_email: str, invite_token: str, store_name: str, invited
 
 def send_password_reset_email(to_email: str, reset_token: str) -> bool:
     """Send password reset email."""
-    subject = "Reset your Wink AI password"
+    subject = "Reset your Wink password"
     
     reset_url = f"https://winkai.in/reset-password?token={reset_token}"
     
@@ -130,7 +130,7 @@ def send_password_reset_email(to_email: str, reset_token: str) -> bool:
         <div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px;">
           <h2 style="color: #333;">Reset Your Password</h2>
           <p>Hi!</p>
-          <p>You requested to reset your password for your Wink AI account.</p>
+          <p>You requested to reset your password for your Wink account.</p>
           
           <div style="text-align: center; margin: 30px 0;">
             <a href="{reset_url}" 
@@ -150,7 +150,7 @@ def send_password_reset_email(to_email: str, reset_token: str) -> bool:
           
           <hr style="border: none; border-top: 1px solid #ddd; margin: 30px 0;">
           <p style="font-size: 12px; color: #999; text-align: center;">
-            This email was sent by Wink AI. If you have questions, please contact support.
+            This email was sent by Wink. If you have questions, please contact support.
           </p>
         </div>
       </body>
@@ -160,7 +160,7 @@ def send_password_reset_email(to_email: str, reset_token: str) -> bool:
     text_body = f"""
     Reset Your Password
     
-    You requested to reset your password for your Wink AI account.
+    You requested to reset your password for your Wink account.
     
     To reset your password, visit: {reset_url}
     

@@ -1,5 +1,5 @@
 """
-Main FastAPI application for Wink AI retail analytics platform.
+Main FastAPI application for Wink retail analytics platform.
 Production-ready multi-tenant system with authentication and RTSP processing.
 """
 
@@ -29,7 +29,7 @@ from .api.camera_routes import router as camera_router
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Application lifespan manager."""
-    logger.info("Starting Wink AI Analytics Platform...")
+    logger.info("Starting Wink Analytics Platform...")
     
     # Run database migrations
     try:
@@ -58,7 +58,7 @@ async def lifespan(app: FastAPI):
 
 # Create FastAPI app
 app = FastAPI(
-    title="Wink AI Analytics Platform",
+    title="Wink Analytics Platform",
     description="Production-ready retail analytics with person detection and zone analytics",
     version="2.0.0",
     lifespan=lifespan
@@ -82,7 +82,7 @@ app.include_router(camera_router)
 async def root():
     """Root endpoint with service information."""
     return {
-        "service": "Wink AI Analytics Platform",
+        "service": "Wink Analytics Platform",
         "version": "2.0.0",
         "status": "running",
         "features": [

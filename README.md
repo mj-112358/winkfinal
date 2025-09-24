@@ -1,5 +1,5 @@
 
-# Wink AI Analytics Platform
+# Wink Analytics Platform
 
 A production-ready multi-tenant retail analytics platform with real-time person detection, zone analytics, and AI-powered insights.
 
@@ -445,4 +445,4 @@ For technical support and bug reports, please contact the development team or ch
 
 ## License
 
-Copyright © 2025 Wink AI Analytics Platform. All rights reserved.
+Copyright © 2025 Wink Analytics Platform. All rights reserved.

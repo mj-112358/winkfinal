@@ -170,7 +170,7 @@ const Sidebar: React.FC<SidebarProps> = ({
           transition={{ delay: 0.2 }}
         >
           <div className="text-xs text-muted text-center">
-            <div className="font-medium">Wink AI v2.0.0</div>
+            <div className="font-medium">Wink v2.0.0</div>
             <div className="mt-1">Retail Analytics Platform</div>
           </div>
         </motion.div>

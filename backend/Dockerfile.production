@@ -1,4 +1,4 @@
-# Production Dockerfile for Wink AI Backend
+# Production Dockerfile for Wink Backend
 FROM python:3.11-slim
 
 # Set environment variables

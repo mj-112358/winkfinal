@@ -77,7 +77,7 @@ const Settings: React.FC = () => {
   
   const [settings, setSettings] = React.useState<SettingsData>({
     general: {
-      store_name: 'Wink AI Store',
+      store_name: 'Wink Store',
       store_id: 'store_001',
       timezone: 'UTC',
       refresh_interval: 5000,
@@ -162,7 +162,7 @@ const Settings: React.FC = () => {
   const getDefaultSettings = (tab: string) => {
     const defaults: any = {
       general: {
-        store_name: 'Wink AI Store',
+        store_name: 'Wink Store',
         store_id: 'store_001',
         timezone: 'UTC',
         refresh_interval: 5000,

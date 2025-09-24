@@ -1,4 +1,4 @@
-# 🚀 Wink AI Platform Deployment Guide
+# 🚀 Wink Platform Deployment Guide
 
 ## Quick Start (5 minutes to production!)
 
@@ -83,7 +83,7 @@ cd /opt/wink/backend
 ```bash
 sudo tee /etc/systemd/system/wink-api.service > /dev/null <<EOF
 [Unit]
-Description=Wink AI Analytics API
+Description=Wink Analytics API
 After=network.target
 
 [Service]

@@ -1,5 +1,5 @@
 """
-Database migration system for Wink AI platform.
+Database migration system for Wink platform.
 Handles schema versioning and migration management.
 """
 

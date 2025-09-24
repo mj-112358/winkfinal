@@ -230,7 +230,7 @@ const Reports: React.FC = () => {
 
   const generatePDFContent = (data: any) => {
     // In a real implementation, you would use a PDF library like jsPDF
-    return `Wink AI Analytics Report
+    return `Wink Analytics Report
 Generated: ${new Date().toLocaleString()}
 Period: ${filters.startDate} to ${filters.endDate}
 
@@ -247,7 +247,7 @@ ${data.insights?.join('\n') || 'No insights available'}
   const shareReport = () => {
     if (navigator.share) {
       navigator.share({
-        title: 'Wink AI Analytics Report',
+        title: 'Wink Analytics Report',
         text: 'Check out this retail analytics report',
         url: window.location.href
       });

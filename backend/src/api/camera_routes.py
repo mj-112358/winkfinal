@@ -1,5 +1,5 @@
 """
-Camera management routes for the Wink AI platform.
+Camera management routes for the Wink platform.
 Handles camera CRUD operations, status monitoring, and processor management.
 """
 
