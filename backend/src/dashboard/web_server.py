@@ -11,6 +11,7 @@ from dotenv import load_dotenv
 
 from ..database.database import get_database
 from ..database.migrations import run_migrations
+from ..database.db_manager import db
 from ..core.store_scope import current_store_id
 from ..analytics.analytics_engine import recompute_daily_store_metrics
 
