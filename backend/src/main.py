@@ -99,10 +99,11 @@ async def health_check():
     """Health check endpoint."""
     try:
         # Check database connection
+        from sqlalchemy import text
         db = get_database()
         with db.get_session() as session:
             # Simple query to test connection
-            session.execute("SELECT 1")
+            session.execute(text("SELECT 1"))
         
         return {
             "status": "healthy",
