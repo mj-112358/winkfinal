@@ -471,7 +471,7 @@ async def get_realtime_metrics():
                     live_count = redis_client.get(f"live_count:{camera_id}")
                     if callable(getattr(live_count, "__await__", None)):
                         live_count = await live_count
-                    count_value = int(live_count.decode() if live_count else 0)
+                    count_value = int(live_count.decode() if live_count else 0) # type: ignore
                     live_metrics[str(camera_id)] = {
                         "camera_name": camera_name,
                         "live_count": count_value,

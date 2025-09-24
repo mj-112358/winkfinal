@@ -25,6 +25,7 @@ from .services.camera_processor import cleanup_processors
 # Import route modules
 from .api.auth_routes import router as auth_router
 from .api.camera_routes import router as camera_router
+from .api.dashboard_routes import router as dashboard_router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -76,6 +77,7 @@ app.add_middleware(
 # Include routers
 app.include_router(auth_router)
 app.include_router(camera_router)
+app.include_router(dashboard_router)
 
 # Health check endpoints
 @app.get("/")
