@@ -12,15 +12,19 @@ class ApiError extends Error {
 }
 
 async function makeRequest<T>(
-  endpoint: string, 
+  endpoint: string,
   options: RequestInit = {}
 ): Promise<T> {
   const url = `${config.apiBaseUrl}${endpoint}`;
-  
+
+  // Get auth token from localStorage
+  const token = localStorage.getItem('auth_token');
+
   try {
     const response = await fetch(url, {
       headers: {
         'Content-Type': 'application/json',
+        ...(token && { 'Authorization': `Bearer ${token}` }),
         ...options.headers,
       },
       ...options,
